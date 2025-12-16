@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Information - SkyVoyage</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;909&display=swap" rel="stylesheet">
+    <style>
+        .flight-info-page {
+            min-height: 100vh;
+            background: var(--color-gray-50);
+            padding: var(--spacing-xl);
+        }
+        
+        .info-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .flight-hero {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--color-white);
+            border-radius: var(--radius-2xl);
+            padding: var(--spacing-3xl);
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .flight-hero::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .flight-header-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .flight-title-info h1 {
+            font-family: var(--font-display);
+            font-size: var(--text-5xl);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .flight-meta {
+            display: flex;
+            gap: var(--spacing-xl);
+            font-size: var(--text-lg);
+            opacity: 0.9;
+        }
+        
+        .route-display-large {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-3xl);
+            padding: var(--spacing-2xl) 0;
+        }
+        
+        .city-display {
+            text-align: center;
+        }
+        
+        .city-code-large {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .city-name-large {
+            font-size: var(--text-2xl);
+            opacity: 0.9;
+        }
+        
+        .route-divider {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+        
+        .route-line {
+            width: 200px;
+            height: 3px;
+            background: rgba(255,255,255,0.3);
+            position: relative;
+        }
+        
+        .plane-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-2xl);
+        }
+        
+        .info-grid-large {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-xl);
+            background: rgba(255,255,255,0.1);
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-xl);
+        }
+        
+        .info-box {
+            text-align: center;
+        }
+        
+        .info-box-label {
+            font-size: var(--text-sm);
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .info-box-value {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+        }
+        
+        .details-section {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-2xl);
+        }
+        
+        .detail-card {
+            padding: var(--spacing-xl);
+            border: 2px solid var(--color-gray-200);
+            border-radius: var(--radius-lg);
+        }
+        
+        .detail-card h3 {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--text-xl);
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: var(--spacing-md) 0;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: var(--color-gray-600);
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: var(--color-gray-900);
+        }
+        
+        .booking-action {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+        
+        .price-display {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .price-label {
+            font-size: var(--text-lg);
+            color: var(--color-gray-600);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .price-amount {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            line-height: 1;
+        }
+        
+        .price-currency {
+            font-size: var(--text-2xl);
+        }
+    </style>
+</head>
+<body>
+    <div class="flight-info-page">
+        <div class="info-container">
+            <a href="passenger-dashboard.html" class="back-btn" style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--color-gray-700); font-weight: 600; margin-bottom: var(--spacing-xl);">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            
+            <!-- Flight Hero Section -->
+            <div class="flight-hero">
+                <div class="hero-content">
+                    <div class="flight-header-main">
+                        <div class="flight-title-info">
+                            <h1 id="flightTitle">Flight Information</h1>
+                            <div class="flight-meta">
+                                <span><i class="fas fa-plane"></i> <strong id="flightNumber">-</strong></span>
+                                <span><i class="fas fa-calendar"></i> <span id="flightDate">-</span></span>
+                            </div>
+                        </div>
+                        <span class="status-badge" id="flightStatusBadge" style="background: rgba(255,255,255,0.2); color: var(--color-white); padding: var(--spacing-sm) var(--spacing-lg); border-radius: var(--radius-full); font-weight: 600;">
+                            Available
+                        </span>
+                    </div>
+                    
+                    <div class="route-display-large">
+                        <div class="city-display">
+                            <div class="city-code-large" id="originCode">JFK</div>
+                            <div class="city-name-large" id="originCity">New York</div>
+                            <div style="margin-top: var(--spacing-md); font-size: var(--text-xl);" id="departureTime">10:00 AM</div>
+                        </div>
+                        
+                        <div class="route-divider">
+                            <div class="plane-icon">
+                                <i class="fas fa-plane"></i>
+                            </div>
+                            <div class="route-line"></div>
+                            <div style="opacity: 0.8;" id="duration">4h 30m</div>
+                        </div>
+                        
+                        <div class="city-display">
+                            <div class="city-code-large" id="destinationCode">LAX</div>
+                            <div class="city-name-large" id="destinationCity">Los Angeles</div>
+                            <div style="margin-top: var(--spacing-md); font-size: var(--text-xl);" id="arrivalTime">2:30 PM</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-grid-large">
+                        <div class="info-box">
+                            <div class="info-box-label">Aircraft</div>
+                            <div class="info-box-value" id="aircraft">Boeing 737</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-label">Available Seats</div>
+                            <div class="info-box-value" id="availableSeats">45</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-label">Duration</div>
+                            <div class="info-box-value" id="durationDisplay">4h 30m</div>
+                        </div>
+                        <div class="info-box">
+                            <div class="info-box-label">Status</div>
+                            <div class="info-box-value" id="statusDisplay">On Time</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Flight Details -->
+            <div class="details-section">
+                <h2 style="margin-bottom: var(--spacing-xl); color: var(--color-gray-900);">
+                    <i class="fas fa-info-circle"></i> Detailed Information
+                </h2>
+                
+                <div class="details-grid">
+                    <div class="detail-card">
+                        <h3><i class="fas fa-plane-departure"></i> Departure Details</h3>
+                        <div class="detail-row">
+                            <span class="detail-label">Airport</span>
+                            <span class="detail-value" id="depAirport">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Terminal</span>
+                            <span class="detail-value">Terminal 4</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Gate</span>
+                            <span class="detail-value">B12</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Date & Time</span>
+                            <span class="detail-value" id="depDateTime">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-card">
+                        <h3><i class="fas fa-plane-arrival"></i> Arrival Details</h3>
+                        <div class="detail-row">
+                            <span class="detail-label">Airport</span>
+                            <span class="detail-value" id="arrAirport">-</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Terminal</span>
+                            <span class="detail-value">Terminal 1</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Baggage Claim</span>
+                            <span class="detail-value">Carousel 3</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Date & Time</span>
+                            <span class="detail-value" id="arrDateTime">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-card">
+                        <h3><i class="fas fa-suitcase"></i> Baggage & Services</h3>
+                        <div class="detail-row">
+                            <span class="detail-label">Checked Baggage</span>
+                            <span class="detail-value">2 x 23kg</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Cabin Baggage</span>
+                            <span class="detail-value">1 x 7kg</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">In-Flight Meal</span>
+                            <span class="detail-value">Included</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Wi-Fi</span>
+                            <span class="detail-value">Available</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Booking Action -->
+            <div class="booking-action">
+                <div class="price-display">
+                    <div class="price-label">Price per passenger</div>
+                    <div class="price-amount">
+                        <span class="price-currency">$</span><span id="priceAmount">299</span>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" style="font-size: var(--text-xl); padding: var(--spacing-lg) var(--spacing-3xl);" onclick="bookThisFlight()">
+                    <i class="fas fa-ticket-alt"></i> Book This Flight
+                </button>
+                
+                <p style="margin-top: var(--spacing-lg); color: var(--color-gray-600);">
+                    <i class="fas fa-shield-alt"></i> Secure booking • Free cancellation within 24 hours
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/api.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const flightId = urlParams.get('id');
+        
+        async function loadFlightInfo() {
+            if (!flightId) {
+                alert('No flight ID provided');
+                window.location.href = 'passenger-dashboard.html';
+                return;
+            }
+            
+            try {
+                const response = await FlightsAPI.getFlightById(flightId);
+                if (response.success) {
+                    displayFlightInfo(response.data);
+                } else {
+                    alert('Flight not found');
+                    window.location.href = 'passenger-dashboard.html';
+                }
+            } catch (error) {
+                console.error('Error loading flight:', error);
+                alert('Error loading flight information');
+            }
+        }
+        
+        function displayFlightInfo(flight) {
+            document.getElementById('flightTitle').textContent = `Flight ${flight.flight_number}`;
+            document.getElementById('flightNumber').textContent = flight.flight_number;
+            document.getElementById('flightDate').textContent = formatDate(flight.departure_time);
+            
+            document.getElementById('originCode').textContent = flight.origin_code || 'XXX';
+            document.getElementById('originCity').textContent = flight.origin_city || 'Origin';
+            document.getElementById('destinationCode').textContent = flight.destination_code || 'XXX';
+            document.getElementById('destinationCity').textContent = flight.destination_city || 'Destination';
+            
+            document.getElementById('departureTime').textContent = formatTime(flight.departure_time);
+            document.getElementById('arrivalTime').textContent = formatTime(flight.arrival_time);
+            
+            const duration = calculateDuration(flight.departure_time, flight.arrival_time);
+            document.getElementById('duration').textContent = duration;
+            document.getElementById('durationDisplay').textContent = duration;
+            
+            document.getElementById('aircraft').textContent = flight.aircraft_model || 'N/A';
+            document.getElementById('availableSeats').textContent = flight.available_seats;
+            document.getElementById('statusDisplay').textContent = (flight.status || 'Scheduled').toUpperCase();
+            
+            document.getElementById('priceAmount').textContent = flight.base_price;
+            
+            // Detailed info
+            document.getElementById('depAirport').textContent = flight.origin_airport || 'N/A';
+            document.getElementById('arrAirport').textContent = flight.destination_airport || 'N/A';
+            document.getElementById('depDateTime').textContent = formatDate(flight.departure_time) + ' ' + formatTime(flight.departure_time);
+            document.getElementById('arrDateTime').textContent = formatDate(flight.arrival_time) + ' ' + formatTime(flight.arrival_time);
+        }
+        
+        function bookThisFlight() {
+            sessionStorage.setItem('selectedFlightId', flightId);
+            window.location.href = 'booking.html';
+        }
+        
+        // Load flight on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFlightInfo();
+        });
+    </script>
+</body>
+</html>

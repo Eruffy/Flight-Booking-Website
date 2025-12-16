@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Profile - SkyVoyage</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        .profile-page {
+            min-height: 100vh;
+            background: var(--color-gray-50);
+            padding: var(--spacing-xl);
+        }
+        
+        .profile-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--color-white);
+            border-radius: var(--radius-2xl);
+            padding: var(--spacing-3xl);
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        .profile-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2xl);
+        }
+        
+        .company-logo-large {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: var(--color-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-2xl);
+            position: relative;
+        }
+        
+        .company-logo-large img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .logo-placeholder {
+            font-size: 4rem;
+            color: var(--primary-color);
+        }
+        
+        .edit-logo-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--color-white);
+            border: 3px solid var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+        
+        .profile-info {
+            flex: 1;
+        }
+        
+        .profile-info h1 {
+            font-family: var(--font-display);
+            font-size: var(--text-5xl);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .profile-bio {
+            font-size: var(--text-lg);
+            opacity: 0.9;
+            margin-bottom: var(--spacing-lg);
+            max-width: 600px;
+        }
+        
+        .profile-meta {
+            display: flex;
+            gap: var(--spacing-xl);
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .profile-sections {
+            display: grid;
+            gap: var(--spacing-xl);
+        }
+        
+        .profile-card {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 2px solid var(--color-gray-200);
+        }
+        
+        .card-title {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-gray-900);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--color-gray-700);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 2px solid var(--color-gray-300);
+            border-radius: var(--radius-md);
+            font-size: var(--text-base);
+            font-family: var(--font-primary);
+            transition: var(--transition-base);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+        
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-group input:disabled {
+            background: var(--color-gray-100);
+            cursor: not-allowed;
+        }
+        
+        .flights-list-compact {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+        
+        .flight-item-compact {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md);
+            background: var(--color-gray-50);
+            border-radius: var(--radius-md);
+            transition: var(--transition-base);
+        }
+        
+        .flight-item-compact:hover {
+            background: var(--color-gray-100);
+        }
+        
+        .flight-route-compact {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-page">
+        <div class="profile-container">
+            <a href="company-dashboard.html" class="back-btn" style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--color-gray-700); font-weight: 600; margin-bottom: var(--spacing-xl);">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-content">
+                    <div class="company-logo-large">
+                        <i class="fas fa-plane-departure logo-placeholder"></i>
+                        <input type="file" id="logoUpload" accept="image/*" style="display: none;">
+                        <div class="edit-logo-btn" onclick="document.getElementById('logoUpload').click()">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <h1 id="companyNameDisplay">SkyVoyage Airlines</h1>
+                        <p class="profile-bio" id="companyBioDisplay">
+                            Leading aviation company providing exceptional flight services worldwide with commitment to safety and customer satisfaction.
+                        </p>
+                        <div class="profile-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span id="companyAddressDisplay">New York, USA</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-plane"></i>
+                                <span><span id="totalFlightsDisplay">0</span> Flights</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>Since 2020</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Company Information Form -->
+            <div class="profile-sections">
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-building"></i>
+                            Company Information
+                        </h2>
+                        <button class="btn btn-primary" id="editBtn" onclick="toggleEdit()">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                    
+                    <form id="companyProfileForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="companyName">Company Name</label>
+                                <input type="text" id="companyName" value="SkyVoyage Airlines" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="companyEmail">Email Address</label>
+                                <input type="email" id="companyEmail" value="info@skyvoyage.com" disabled>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="companyPhone">Phone Number</label>
+                                <input type="tel" id="companyPhone" value="+1 (555) 123-4567" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="companyWebsite">Website</label>
+                                <input type="url" id="companyWebsite" value="https://skyvoyage.com" disabled>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="companyAddress">Address</label>
+                            <input type="text" id="companyAddress" value="123 Aviation Boulevard, New York, NY 10001, USA" disabled>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="companyBio">Company Bio</label>
+                            <textarea id="companyBio" disabled>Leading aviation company providing exceptional flight services worldwide with commitment to safety and customer satisfaction.</textarea>
+                        </div>
+                        
+                        <div id="saveSection" style="display: none; margin-top: var(--spacing-xl);">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                            <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Flights List -->
+                <div class="profile-card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-list"></i>
+                            My Flights
+                            <span class="count-badge" id="flightsCount" style="background: var(--primary-color); color: var(--color-white); padding: 4px 12px; border-radius: var(--radius-full); font-size: var(--text-sm);">0</span>
+                        </h2>
+                        <button class="btn btn-secondary" onclick="window.location.href='add-flight.html'">
+                            <i class="fas fa-plus"></i> Add Flight
+                        </button>
+                    </div>
+                    
+                    <div class="flights-list-compact" id="flightsList">
+                        <!-- Flights will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/api.js"></script>
+    <script>
+        let isEditing = false;
+        
+        function toggleEdit() {
+            isEditing = !isEditing;
+            const inputs = document.querySelectorAll('#companyProfileForm input, #companyProfileForm textarea');
+            
+            inputs.forEach(input => {
+                input.disabled = !isEditing;
+            });
+            
+            document.getElementById('saveSection').style.display = isEditing ? 'block' : 'none';
+            document.getElementById('editBtn').innerHTML = isEditing 
+                ? '<i class="fas fa-times"></i> Cancel' 
+                : '<i class="fas fa-edit"></i> Edit';
+        }
+        
+        function cancelEdit() {
+            toggleEdit();
+            // Reset form to original values
+            document.getElementById('companyProfileForm').reset();
+        }
+        
+        document.getElementById('companyProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('companyName').value,
+                email: document.getElementById('companyEmail').value,
+                phone: document.getElementById('companyPhone').value,
+                website: document.getElementById('companyWebsite').value,
+                address: document.getElementById('companyAddress').value,
+                bio: document.getElementById('companyBio').value
+            };
+            
+            try {
+                // Call update profile API
+                alert('Profile updated successfully!');
+                
+                // Update display values
+                document.getElementById('companyNameDisplay').textContent = formData.name;
+                document.getElementById('companyBioDisplay').textContent = formData.bio;
+                document.getElementById('companyAddressDisplay').textContent = formData.address;
+                
+                toggleEdit();
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('Error updating profile');
+            }
+        });
+        
+        // Logo upload
+        document.getElementById('logoUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const logoContainer = document.querySelector('.company-logo-large');
+                    logoContainer.innerHTML = `
+                        <img src="${event.target.result}" alt="Company Logo">
+                        <input type="file" id="logoUpload" accept="image/*" style="display: none;">
+                        <div class="edit-logo-btn" onclick="document.getElementById('logoUpload').click()">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    `;
+                    // Re-attach event listener
+                    document.getElementById('logoUpload').addEventListener('change', arguments.callee);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Load flights
+        async function loadFlights() {
+            try {
+                const response = await FlightsAPI.getAllFlights();
+                if (response.success) {
+                    displayFlights(response.data);
+                }
+            } catch (error) {
+                console.error('Error loading flights:', error);
+            }
+        }
+        
+        function displayFlights(flights) {
+            const list = document.getElementById('flightsList');
+            document.getElementById('flightsCount').textContent = flights.length;
+            document.getElementById('totalFlightsDisplay').textContent = flights.length;
+            
+            if (flights.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: var(--color-gray-500); padding: var(--spacing-xl);">No flights yet</p>';
+                return;
+            }
+            
+            list.innerHTML = flights.slice(0, 5).map(flight => `
+                <div class="flight-item-compact" onclick="window.location.href='flight-details.html?id=${flight.flight_id}'">
+                    <div>
+                        <div class="flight-route-compact">
+                            <span>${flight.origin_code || 'XXX'}</span>
+                            <i class="fas fa-arrow-right" style="color: var(--color-gray-400);"></i>
+                            <span>${flight.destination_code || 'XXX'}</span>
+                        </div>
+                        <div style="font-size: var(--text-sm); color: var(--color-gray-600); margin-top: var(--spacing-xs);">
+                            ${flight.flight_number} • ${formatDate(flight.departure_time)}
+                        </div>
+                    </div>
+                    <span class="status-badge ${flight.status || 'scheduled'}">${flight.status || 'Scheduled'}</span>
+                </div>
+            `).join('');
+        }
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFlights();
+        });
+    </script>
+</body>
+</html>

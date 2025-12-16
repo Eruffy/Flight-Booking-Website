@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Flight - SkyVoyage</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;909&display=swap" rel="stylesheet">
+    <style>
+        .add-flight-page {
+            min-height: 100vh;
+            background: var(--color-gray-50);
+            padding: var(--spacing-xl);
+        }
+        
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .form-header {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+        
+        .form-header h1 {
+            font-family: var(--font-display);
+            font-size: var(--text-4xl);
+            color: var(--color-gray-900);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .form-header p {
+            color: var(--color-gray-600);
+            font-size: var(--text-lg);
+        }
+        
+        .form-card {
+            background: var(--color-white);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-2xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .form-section {
+            margin-bottom: var(--spacing-2xl);
+            padding-bottom: var(--spacing-2xl);
+            border-bottom: 2px solid var(--color-gray-200);
+        }
+        
+        .form-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--color-gray-900);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .itinerary-builder {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            flex-wrap: wrap;
+        }
+        
+        .itinerary-stop {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .itinerary-arrow {
+            color: var(--primary-color);
+            font-size: var(--text-2xl);
+        }
+        
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+        }
+    </style>
+</head>
+<body>
+    <div class="add-flight-page">
+        <div class="form-container">
+            <a href="company-dashboard.html" class="back-btn" style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--color-gray-700); font-weight: 600; margin-bottom: var(--spacing-xl);">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            
+            <div class="form-header">
+                <h1><i class="fas fa-plane-departure"></i> Add New Flight</h1>
+                <p>Create a new flight route for passengers to book</p>
+            </div>
+            
+            <div class="form-card">
+                <form id="addFlightForm">
+                    <!-- Basic Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-info-circle"></i>
+                            Basic Information
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="flightName">Flight Name *</label>
+                                <input type="text" id="flightName" name="flightName" required placeholder="e.g., Morning Express">
+                            </div>
+                            <div class="form-group">
+                                <label for="flightId">Flight ID / Number *</label>
+                                <input type="text" id="flightId" name="flightId" required placeholder="e.g., SV001">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Itinerary -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-route"></i>
+                            Flight Itinerary
+                        </h3>
+                        
+                        <div class="itinerary-builder">
+                            <div class="itinerary-stop">
+                                <div class="form-group">
+                                    <label for="originAirport">Origin Airport *</label>
+                                    <select id="originAirport" name="originAirport" required>
+                                        <option value="">Select origin</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="itinerary-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                            
+                            <div class="itinerary-stop">
+                                <div class="form-group">
+                                    <label for="destinationAirport">Destination Airport *</label>
+                                    <select id="destinationAirport" name="destinationAirport" required>
+                                        <option value="">Select destination</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Time & Schedule -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-clock"></i>
+                            Time & Schedule
+                        </h3>
+                        
+                        <div class="time-inputs">
+                            <div class="form-group">
+                                <label for="departureDateTime">Departure Date & Time *</label>
+                                <input type="datetime-local" id="departureDateTime" name="departureDateTime" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="arrivalDateTime">Arrival Date & Time *</label>
+                                <input type="datetime-local" id="arrivalDateTime" name="arrivalDateTime" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pricing & Capacity -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-dollar-sign"></i>
+                            Pricing & Capacity
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="baseFee">Base Fee (USD) *</label>
+                                <input type="number" id="baseFee" name="baseFee" required placeholder="e.g., 299.99" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="totalPassengers">Total Passengers (Capacity) *</label>
+                                <input type="number" id="totalPassengers" name="totalPassengers" required placeholder="e.g., 180" min="1">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional Information -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-plane"></i>
+                            Additional Information
+                        </h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="aircraft">Aircraft Type</label>
+                                <select id="aircraft" name="aircraft">
+                                    <option value="">Select aircraft</option>
+                                    <option value="1">Boeing 737</option>
+                                    <option value="2">Airbus A320</option>
+                                    <option value="3">Boeing 777</option>
+                                    <option value="4">Airbus A380</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="status">Flight Status</label>
+                                <select id="status" name="status">
+                                    <option value="scheduled">Scheduled</option>
+                                    <option value="active">Active</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Buttons -->
+                    <div style="display: flex; gap: var(--spacing-md); justify-content: flex-end; margin-top: var(--spacing-2xl);">
+                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Create Flight
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/api.js"></script>
+    <script>
+        // Load airports for dropdowns
+        async function loadAirports() {
+            try {
+                const response = await AirportsAPI.getAll();
+                if (response.success) {
+                    const originSelect = document.getElementById('originAirport');
+                    const destinationSelect = document.getElementById('destinationAirport');
+                    
+                    response.data.forEach(airport => {
+                        const option1 = document.createElement('option');
+                        option1.value = airport.airport_id;
+                        option1.textContent = `${airport.city} (${airport.iata_code}) - ${airport.airport_name}`;
+                        originSelect.appendChild(option1);
+                        
+                        const option2 = document.createElement('option');
+                        option2.value = airport.airport_id;
+                        option2.textContent = `${airport.city} (${airport.iata_code}) - ${airport.airport_name}`;
+                        destinationSelect.appendChild(option2);
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading airports:', error);
+            }
+        }
+        
+        // Set minimum datetime to now
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('departureDateTime').min = now.toISOString().slice(0, 16);
+        
+        // Update arrival minimum when departure changes
+        document.getElementById('departureDateTime').addEventListener('change', function() {
+            document.getElementById('arrivalDateTime').min = this.value;
+        });
+        
+        // Form submission
+        document.getElementById('addFlightForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                flight_number: document.getElementById('flightId').value,
+                origin_airport_id: document.getElementById('originAirport').value,
+                destination_airport_id: document.getElementById('destinationAirport').value,
+                departure_time: document.getElementById('departureDateTime').value,
+                arrival_time: document.getElementById('arrivalDateTime').value,
+                base_price: document.getElementById('baseFee').value,
+                total_capacity: document.getElementById('totalPassengers').value,
+                available_seats: document.getElementById('totalPassengers').value,
+                aircraft_id: document.getElementById('aircraft').value || null,
+                status: document.getElementById('status').value
+            };
+            
+            // Validation
+            if (formData.origin_airport_id === formData.destination_airport_id) {
+                alert('Origin and destination airports cannot be the same');
+                return;
+            }
+            
+            if (new Date(formData.arrival_time) <= new Date(formData.departure_time)) {
+                alert('Arrival time must be after departure time');
+                return;
+            }
+            
+            try {
+                // Call create flight API
+                console.log('Creating flight:', formData);
+                alert('Flight created successfully!');
+                window.location.href = 'company-dashboard.html';
+            } catch (error) {
+                console.error('Error creating flight:', error);
+                alert('Error creating flight. Please try again.');
+            }
+        });
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAirports();
+        });
+    </script>
+</body>
+</html>

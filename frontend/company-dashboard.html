@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard - SkyVoyage</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dash-primary: #2563eb;
+            --dash-primary-dark: #1e40af;
+            --dash-primary-light: #3b82f6;
+            --dash-secondary: #10b981;
+            --dash-accent: #f59e0b;
+            --dash-danger: #ef4444;
+            --dash-dark: #0f172a;
+            --dash-gray-50: #f8fafc;
+            --dash-gray-100: #f1f5f9;
+            --dash-gray-200: #e2e8f0;
+            --dash-gray-300: #cbd5e1;
+            --dash-gray-700: #334155;
+            --dash-gray-800: #1e293b;
+            --dash-gray-900: #0f172a;
+            --dash-white: #ffffff;
+            --dash-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+            --dash-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --dash-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --dash-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dash-gray-50);
+            color: var(--dash-gray-900);
+            line-height: 1.6;
+        }
+
+        /* LAYOUT */
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: var(--dash-white);
+            border-right: 1px solid var(--dash-gray-200);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: var(--dash-shadow-md);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--dash-gray-300);
+            border-radius: 10px;
+        }
+
+        .company-header {
+            padding: 2rem;
+            text-align: center;
+            background: linear-gradient(180deg, var(--dash-gray-50) 0%, var(--dash-white) 100%);
+            border-bottom: 1px solid var(--dash-gray-200);
+        }
+
+        .company-logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--dash-primary) 0%, var(--dash-primary-dark) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--dash-white);
+            font-size: 2.5rem;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .company-logo:hover {
+            transform: translateY(-4px) rotate(-2deg);
+            box-shadow: 0 12px 32px rgba(37, 99, 235, 0.35);
+        }
+
+        .company-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dash-gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .company-type {
+            font-size: 0.875rem;
+            color: var(--dash-gray-700);
+            font-weight: 500;
+        }
+
+        .sidebar-nav {
+            padding: 1.5rem 1rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--dash-gray-700);
+            font-weight: 500;
+            font-size: 0.9375rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.125rem;
+        }
+
+        .nav-item:hover {
+            background: var(--dash-gray-100);
+            color: var(--dash-primary);
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: var(--dash-primary);
+            color: var(--dash-white);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        .nav-item.active:hover {
+            transform: translateX(0);
+        }
+
+        .badge {
+            margin-left: auto;
+            background: var(--dash-danger);
+            color: var(--dash-white);
+            padding: 0.125rem 0.5rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .nav-item.active .badge {
+            background: var(--dash-white);
+            color: var(--dash-primary);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2.5rem;
+            background: var(--dash-gray-50);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--dash-gray-900);
+            letter-spacing: -0.5px;
+        }
+
+        .btn-primary {
+            background: var(--dash-primary);
+            color: var(--dash-white);
+            border: none;
+            padding: 0.875rem 1.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.625rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--dash-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--dash-white);
+            border-radius: 16px;
+            padding: 1.75rem;
+            box-shadow: var(--dash-shadow);
+            border: 1px solid var(--dash-gray-200);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--dash-primary);
+            transform: scaleY(0);
+            transform-origin: bottom;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card.primary::before { background: var(--dash-primary); }
+        .stat-card.success::before { background: var(--dash-secondary); }
+        .stat-card.warning::before { background: var(--dash-accent); }
+        .stat-card.danger::before { background: var(--dash-danger); }
+
+        .stat-card:hover {
+            box-shadow: var(--dash-shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--dash-white);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .stat-icon.primary { background: linear-gradient(135deg, var(--dash-primary), var(--dash-primary-dark)); }
+        .stat-icon.success { background: linear-gradient(135deg, var(--dash-secondary), #059669); }
+        .stat-icon.warning { background: linear-gradient(135deg, var(--dash-accent), #d97706); }
+        .stat-icon.danger { background: linear-gradient(135deg, var(--dash-danger), #dc2626); }
+
+        .stat-value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--dash-gray-900);
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--dash-gray-700);
+            font-weight: 500;
+        }
+
+        /* CONTENT SECTION */
+        .content-section {
+            background: var(--dash-white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--dash-shadow);
+            border: 1px solid var(--dash-gray-200);
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.25rem;
+            border-bottom: 2px solid var(--dash-gray-100);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dash-gray-900);
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+        }
+
+        .section-title i {
+            color: var(--dash-primary);
+        }
+
+        /* SEARCH BOX */
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.875rem 1rem 0.875rem 3rem;
+            border: 2px solid var(--dash-gray-200);
+            border-radius: 12px;
+            font-size: 0.9375rem;
+            transition: all 0.2s ease;
+            background: var(--dash-gray-50);
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--dash-primary);
+            background: var(--dash-white);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--dash-gray-700);
+            font-size: 1.125rem;
+        }
+
+        /* TABLE */
+        .flights-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .flights-table thead {
+            background: var(--dash-gray-50);
+        }
+
+        .flights-table th {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--dash-gray-700);
+            font-size: 0.8125rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .flights-table th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .flights-table th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .flights-table tbody tr {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-bottom: 1px solid var(--dash-gray-100);
+        }
+
+        .flights-table tbody tr:hover {
+            background: var(--dash-gray-50);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .flights-table td {
+            padding: 1.25rem;
+        }
+
+        .flight-number {
+            font-weight: 700;
+            color: var(--dash-primary);
+            font-size: 0.9375rem;
+        }
+
+        .flight-route {
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            font-weight: 600;
+            color: var(--dash-gray-900);
+        }
+
+        .flight-route i {
+            color: var(--dash-gray-700);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.375rem 0.875rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.scheduled {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-badge.completed {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .status-badge.cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* ACTION BUTTONS */
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--dash-gray-100);
+            color: var(--dash-gray-700);
+        }
+
+        .btn-icon:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-view:hover {
+            background: var(--dash-primary);
+            color: var(--dash-white);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-edit:hover {
+            background: var(--dash-accent);
+            color: var(--dash-white);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-delete:hover {
+            background: var(--dash-danger);
+            color: var(--dash-white);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--dash-gray-700);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--dash-gray-300);
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: var(--dash-gray-700);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 1.5rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flights-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .flights-table th,
+            .flights-table td {
+                padding: 0.75rem;
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="company-header">
+                <div class="company-logo">
+                    <i class="fas fa-plane-departure"></i>
+                </div>
+                <div class="company-name" id="companyName">SkyVoyage Airlines</div>
+                <div class="company-type">Aviation Company</div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-item active" data-page="home">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" data-page="flights">
+                    <i class="fas fa-plane"></i>
+                    <span>My Flights</span>
+                </div>
+                <div class="nav-item" data-page="add-flight">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add Flight</span>
+                </div>
+                <div class="nav-item" data-page="messages">
+                    <i class="fas fa-envelope"></i>
+                    <span>Messages</span>
+                    <span class="badge">3</span>
+                </div>
+                <div class="nav-item" data-page="profile">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Profile</span>
+                </div>
+                <div class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </div>
+            </nav>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">Company Dashboard</h1>
+                    <p style="color: var(--color-gray-600);">Manage your flights and operations</p>
+                </div>
+                <button class="btn btn-primary" onclick="showAddFlight()">
+                    <i class="fas fa-plus"></i> Add New Flight
+                </button>
+            </div>
+            
+            <!-- Statistics -->
+            <div class="stats-grid">
+                <div class="stat-card primary">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalFlights">0</div>
+                            <div class="stat-label">Total Flights</div>
+                        </div>
+                        <div class="stat-icon primary">
+                            <i class="fas fa-plane"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card success">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="activeFlights">0</div>
+                            <div class="stat-label">Active Flights</div>
+                        </div>
+                        <div class="stat-icon success">
+                            <i class="fas fa-plane-departure"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card warning">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalPassengers">0</div>
+                            <div class="stat-label">Total Passengers</div>
+                        </div>
+                        <div class="stat-icon warning">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="stat-card danger">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="pendingBookings">0</div>
+                            <div class="stat-label">Pending Bookings</div>
+                        </div>
+                        <div class="stat-icon danger">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Flights List -->
+            <div class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-list"></i> Flights List
+                    </h2>
+                    <div>
+                        <input type="text" id="searchFlights" placeholder="Search flights..." style="padding: var(--spacing-sm) var(--spacing-md); border: 2px solid var(--color-gray-300); border-radius: var(--radius-md);">
+                    </div>
+                </div>
+                
+                <div id="flightsTableContainer">
+                    <table class="flights-table">
+                        <thead>
+                            <tr>
+                                <th>Flight #</th>
+                                <th>Route</th>
+                                <th>Departure</th>
+                                <th>Arrival</th>
+                                <th>Passengers</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="flightsTableBody">
+                            <!-- Flights will be loaded here -->
+                        </tbody>
+                    </table>
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <i class="fas fa-plane-slash"></i>
+                        <h3>No Flights Yet</h3>
+                        <p>Start by adding your first flight</p>
+                        <button class="btn btn-primary" onclick="showAddFlight()" style="margin-top: var(--spacing-lg);">
+                            <i class="fas fa-plus"></i> Add Flight
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Load company flights
+        async function loadCompanyFlights() {
+            try {
+                const response = await FlightsAPI.getAllFlights();
+                if (response.success && response.data.length > 0) {
+                    displayFlights(response.data);
+                    updateStats(response.data);
+                } else {
+                    document.getElementById('emptyState').style.display = 'block';
+                    document.querySelector('.flights-table').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading flights:', error);
+            }
+        }
+        
+        function displayFlights(flights) {
+            const tbody = document.getElementById('flightsTableBody');
+            tbody.innerHTML = '';
+            
+            flights.forEach(flight => {
+                const row = document.createElement('tr');
+                row.onclick = () => viewFlightDetails(flight.flight_id);
+                
+                row.innerHTML = `
+                    <td><span class="flight-number">${flight.flight_number}</span></td>
+                    <td>
+                        <div class="flight-route">
+                            <span>${flight.origin_code || 'XXX'}</span>
+                            <i class="fas fa-arrow-right" style="color: var(--color-gray-400);"></i>
+                            <span>${flight.destination_code || 'XXX'}</span>
+                        </div>
+                    </td>
+                    <td>${formatDate(flight.departure_time)}<br><small style="color: var(--color-gray-600);">${formatTime(flight.departure_time)}</small></td>
+                    <td>${formatDate(flight.arrival_time)}<br><small style="color: var(--color-gray-600);">${formatTime(flight.arrival_time)}</small></td>
+                    <td>${flight.available_seats} / ${flight.total_capacity || 'N/A'}</td>
+                    <td><span class="status-badge ${flight.status}">${flight.status || 'scheduled'}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-icon btn-view" onclick="event.stopPropagation(); viewFlightDetails(${flight.flight_id})" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-icon btn-edit" onclick="event.stopPropagation(); editFlight(${flight.flight_id})" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn-icon btn-delete" onclick="event.stopPropagation(); deleteFlight(${flight.flight_id})" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        function updateStats(flights) {
+            document.getElementById('totalFlights').textContent = flights.length;
+            document.getElementById('activeFlights').textContent = flights.filter(f => f.status === 'active' || f.status === 'scheduled').length;
+            
+            // Calculate total passengers (would come from bookings)
+            const totalPassengers = flights.reduce((sum, f) => sum + (parseInt(f.total_capacity) - parseInt(f.available_seats)), 0);
+            document.getElementById('totalPassengers').textContent = totalPassengers;
+        }
+        
+        function viewFlightDetails(flightId) {
+            window.location.href = `flight-details.html?id=${flightId}`;
+        }
+        
+        function showAddFlight() {
+            window.location.href = 'add-flight.html';
+        }
+        
+        function editFlight(flightId) {
+            window.location.href = `add-flight.html?id=${flightId}`;
+        }
+        
+        function deleteFlight(flightId) {
+            if (confirm('Are you sure you want to delete this flight?')) {
+                // Call delete API
+                alert('Flight deletion functionality will be implemented');
+            }
+        }
+        
+        function logout() {
+            clearAuthData();
+            window.location.href = 'index.html';
+        }
+        
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const page = this.dataset.page;
+                if (page) {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Route to different pages
+                    if (page === 'profile') window.location.href = 'company-profile.html';
+                    else if (page === 'add-flight') window.location.href = 'add-flight.html';
+                    else if (page === 'messages') window.location.href = 'messages.html';
+                }
+            });
+        });
+        
+        // Search functionality
+        document.getElementById('searchFlights')?.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('.flights-table tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCompanyFlights();
+        });
+    </script>
+</body>
+</html>

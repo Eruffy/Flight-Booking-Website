@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - SkyVoyage</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+    <style>
+        .profile-page {
+            min-height: 100vh;
+            background: var(--color-gray-50);
+            padding: var(--spacing-xl);
+        }
+        
+        .profile-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .profile-card {
+            background: var(--color-white);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+        
+        .profile-banner {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            height: 200px;
+            position: relative;
+        }
+        
+        .profile-main {
+            padding: 0 var(--spacing-3xl) var(--spacing-3xl);
+            margin-top: -80px;
+            position: relative;
+        }
+        
+        .avatar-section {
+            display: flex;
+            align-items: end;
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-2xl);
+        }
+        
+        .profile-avatar {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: var(--color-white);
+            border: 6px solid var(--color-white);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            position: relative;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .upload-avatar-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 48px;
+            height: 48px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-white);
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .profile-title {
+            flex: 1;
+        }
+        
+        .profile-title h1 {
+            font-family: var(--font-display);
+            font-size: var(--text-4xl);
+            color: var(--color-gray-900);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .profile-subtitle {
+            color: var(--color-gray-600);
+            font-size: var(--text-lg);
+        }
+        
+        .profile-sections {
+            display: grid;
+            gap: var(--spacing-2xl);
+        }
+        
+        .section-card {
+            padding: var(--spacing-2xl);
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--radius-xl);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 2px solid var(--color-gray-200);
+        }
+        
+        .section-title {
+            font-size: var(--text-2xl);
+            font-weight: 700;
+            color: var(--color-gray-900);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+        }
+        
+        .info-field {
+            padding: var(--spacing-lg);
+            background: var(--color-gray-50);
+            border-radius: var(--radius-md);
+        }
+        
+        .field-label {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--color-gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-xs);
+        }
+        
+        .field-value {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--color-gray-900);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-page">
+        <div class="profile-container">
+            <a href="passenger-dashboard.html" class="back-btn" style="display: inline-flex; align-items: center; gap: var(--spacing-sm); color: var(--color-gray-700); font-weight: 600; margin-bottom: var(--spacing-xl);">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            
+            <div class="profile-card">
+                <div class="profile-banner"></div>
+                
+                <div class="profile-main">
+                    <div class="avatar-section">
+                        <div class="profile-avatar" id="profileAvatar">
+                            JD
+                            <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                            <div class="upload-avatar-btn" onclick="document.getElementById('avatarUpload').click()">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                        </div>
+                        <div class="profile-title">
+                            <h1 id="profileName">John Doe</h1>
+                            <p class="profile-subtitle">Frequent Traveler • Member since 2020</p>
+                        </div>
+                        <button class="btn btn-primary" id="editProfileBtn" onclick="toggleEdit()">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </button>
+                    </div>
+                    
+                    <!-- Profile Information -->
+                    <div class="profile-sections">
+                        <!-- Personal Information (Display Mode) -->
+                        <div class="section-card" id="displayMode">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <i class="fas fa-user"></i>
+                                    Personal Information
+                                </h2>
+                            </div>
+                            
+                            <div class="info-grid">
+                                <div class="info-field">
+                                    <div class="field-label">First Name</div>
+                                    <div class="field-value" id="displayFirstName">John</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="field-label">Last Name</div>
+                                    <div class="field-value" id="displayLastName">Doe</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="field-label">Email Address</div>
+                                    <div class="field-value" id="displayEmail">john.doe@example.com</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="field-label">Phone Number</div>
+                                    <div class="field-value" id="displayPhone">+1 (555) 123-4567</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="field-label">Date of Birth</div>
+                                    <div class="field-value" id="displayDOB">January 15, 1990</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="field-label">Nationality</div>
+                                    <div class="field-value" id="displayNationality">United States</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="field-label">Passport Number</div>
+                                    <div class="field-value" id="displayPassport">AB1234567</div>
+                                </div>
+                                <div class="info-field">
+                                    <div class="field-label">Address</div>
+                                    <div class="field-value" id="displayAddress">123 Main St, New York, NY 10001</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Edit Mode -->
+                        <div class="section-card" id="editMode" style="display: none;">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <i class="fas fa-edit"></i>
+                                    Edit Personal Information
+                                </h2>
+                            </div>
+                            
+                            <form id="profileEditForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="firstName">First Name *</label>
+                                        <input type="text" id="firstName" value="John" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lastName">Last Name *</label>
+                                        <input type="text" id="lastName" value="Doe" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="email">Email Address *</label>
+                                        <input type="email" id="email" value="john.doe@example.com" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">Phone Number *</label>
+                                        <input type="tel" id="phone" value="+15551234567" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="dob">Date of Birth</label>
+                                        <input type="date" id="dob" value="1990-01-15">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="nationality">Nationality</label>
+                                        <input type="text" id="nationality" value="United States">
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="passport">Passport Number</label>
+                                        <input type="text" id="passport" value="AB1234567">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="address">Address</label>
+                                        <input type="text" id="address" value="123 Main St, New York, NY 10001">
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: var(--spacing-md); justify-content: flex-end; margin-top: var(--spacing-xl);">
+                                    <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
+                                        Cancel
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i> Save Changes
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Security Section -->
+                        <div class="section-card">
+                            <div class="section-header">
+                                <h2 class="section-title">
+                                    <i class="fas fa-lock"></i>
+                                    Security
+                                </h2>
+                            </div>
+                            
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-key"></i> Change Password
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/api.js"></script>
+    <script>
+        let isEditing = false;
+        
+        function toggleEdit() {
+            isEditing = !isEditing;
+            document.getElementById('displayMode').style.display = isEditing ? 'none' : 'block';
+            document.getElementById('editMode').style.display = isEditing ? 'block' : 'none';
+            document.getElementById('editProfileBtn').innerHTML = isEditing 
+                ? '<i class="fas fa-times"></i> Cancel' 
+                : '<i class="fas fa-edit"></i> Edit Profile';
+            
+            if (!isEditing) {
+                cancelEdit();
+            }
+        }
+        
+        function cancelEdit() {
+            isEditing = false;
+            document.getElementById('displayMode').style.display = 'block';
+            document.getElementById('editMode').style.display = 'none';
+            document.getElementById('editProfileBtn').innerHTML = '<i class="fas fa-edit"></i> Edit Profile';
+        }
+        
+        // Avatar upload
+        document.getElementById('avatarUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const avatar = document.getElementById('profileAvatar');
+                    avatar.innerHTML = `
+                        <img src="${event.target.result}" alt="Profile Photo">
+                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                        <div class="upload-avatar-btn" onclick="document.getElementById('avatarUpload').click()">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    `;
+                    // Re-attach event listener
+                    document.getElementById('avatarUpload').addEventListener('change', arguments.callee);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Form submission
+        document.getElementById('profileEditForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                first_name: document.getElementById('firstName').value,
+                last_name: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                date_of_birth: document.getElementById('dob').value,
+                nationality: document.getElementById('nationality').value,
+                passport_number: document.getElementById('passport').value,
+                address: document.getElementById('address').value
+            };
+            
+            try {
+                // Call update profile API
+                console.log('Updating profile:', formData);
+                
+                // Update display values
+                document.getElementById('displayFirstName').textContent = formData.first_name;
+                document.getElementById('displayLastName').textContent = formData.last_name;
+                document.getElementById('displayEmail').textContent = formData.email;
+                document.getElementById('displayPhone').textContent = formData.phone;
+                document.getElementById('displayDOB').textContent = new Date(formData.date_of_birth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                document.getElementById('displayNationality').textContent = formData.nationality;
+                document.getElementById('displayPassport').textContent = formData.passport_number;
+                document.getElementById('displayAddress').textContent = formData.address;
+                document.getElementById('profileName').textContent = `${formData.first_name} ${formData.last_name}`;
+                
+                alert('Profile updated successfully!');
+                toggleEdit();
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('Error updating profile');
+            }
+        });
+        
+        // Load user data
+        function loadUserData() {
+            const userData = getUserData();
+            if (userData) {
+                document.getElementById('profileName').textContent = `${userData.first_name} ${userData.last_name}`;
+                document.getElementById('displayFirstName').textContent = userData.first_name;
+                document.getElementById('displayLastName').textContent = userData.last_name;
+                document.getElementById('displayEmail').textContent = userData.email;
+                document.getElementById('displayPhone').textContent = userData.phone || 'N/A';
+                
+                const initials = `${userData.first_name.charAt(0)}${userData.last_name.charAt(0)}`.toUpperCase();
+                document.getElementById('profileAvatar').innerHTML = `
+                    ${initials}
+                    <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                    <div class="upload-avatar-btn" onclick="document.getElementById('avatarUpload').click()">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                `;
+                
+                // Pre-fill form
+                document.getElementById('firstName').value = userData.first_name;
+                document.getElementById('lastName').value = userData.last_name;
+                document.getElementById('email').value = userData.email;
+                document.getElementById('phone').value = userData.phone || '';
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+        });
+    </script>
+</body>
+</html>
