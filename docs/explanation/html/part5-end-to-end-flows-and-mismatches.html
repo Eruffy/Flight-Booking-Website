@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flight Booking Website — Part 5 (Flows + Mismatches)</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; line-height: 1.45; margin: 24px; color: #111; }
+    h1, h2, h3 { line-height: 1.2; }
+    h1 { font-size: 26px; margin: 0 0 8px; }
+    .meta { color: #444; margin: 0 0 18px; }
+    .box { border: 1px solid #ddd; padding: 12px 14px; border-radius: 8px; margin: 12px 0; }
+    .warn { background: #fff4e5; border-color: #f2c97d; }
+    code, pre { font-family: Consolas, Menlo, Monaco, monospace; }
+    pre { background: #f6f8fa; padding: 10px 12px; border-radius: 8px; overflow: auto; }
+    .small { font-size: 12px; color: #444; }
+    @media print { body { margin: 12mm; } }
+  </style>
+</head>
+<body>
+  <h1>Flight Booking Website — Explanation (Part 5/5)</h1>
+  <p class="meta">Part 5: End-to-end user flows, data flow, and known mismatches.</p>
+
+  <div class="box">
+    <h2>1) End-to-end flow (Passenger)</h2>
+    <ol>
+      <li><strong>Register / Login:</strong> Passenger uses <code>register.html</code> and <code>login.html</code> to create/log in. Backend: <code>backend/api/register.php</code>, <code>backend/api/auth.php</code>.</li>
+      <li><strong>Search flights:</strong> Passenger selects from/to cities. Backend: <code>backend/api/search-flights.php</code> (World A) or a seat-class search endpoint (World B).</li>
+      <li><strong>View flight:</strong> Passenger opens a flight page (details). Backend might call a “flight details” endpoint or reuse list info.</li>
+      <li><strong>Book:</strong> Passenger creates a booking via <code>backend/api/bookings.php</code> with payment type (cash/account).</li>
+      <li><strong>Dashboard:</strong> Passenger views bookings via <code>backend/api/passenger-bookings.php</code>.</li>
+      <li><strong>Cancel booking:</strong> Passenger cancels; backend refunds if paid with account and updates flight counters.</li>
+      <li><strong>Messages:</strong> Passenger contacts company via <code>backend/api/messages.php</code>.</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <h2>2) End-to-end flow (Company)</h2>
+    <ol>
+      <li><strong>Register / Login:</strong> Company uses the same register/login pages with user_type=company.</li>
+      <li><strong>Create flight:</strong> Company adds a flight (fees, max passengers, etc.) and defines itinerary cities in sequence order.</li>
+      <li><strong>Company dashboard:</strong> Lists company flights via <code>backend/api/company-flights.php</code>.</li>
+      <li><strong>Flight details:</strong> Shows pending + registered passengers via <code>backend/api/company-flight-details.php</code>.</li>
+      <li><strong>Cancel flight:</strong> Company cancels; backend cancels bookings and refunds account payments via <code>backend/api/cancel-flight.php</code>.</li>
+      <li><strong>Messages:</strong> Company responds via <code>backend/api/messages.php</code>.</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <h2>3) How data flows between frontend and backend</h2>
+    <ul>
+      <li>Frontend builds a request (URL + JSON body) using <code>fetch()</code>.</li>
+      <li>Backend reads <code>php://input</code> (JSON) or query params, validates them, and runs SQL.</li>
+      <li>Backend returns JSON; frontend updates DOM with the result or shows errors.</li>
+      <li>User/session state is stored client-side (browser storage).</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <h2>4) Known mismatches / gotchas (very important for students)</h2>
+    <h3>4.1 Schema vs models mismatch</h3>
+    <p>
+      The schema in <code>database/project_schema.sql</code> (World A) does not match the expectations of the PHP model classes
+      in <code>backend/models</code> (World B). Example mismatch patterns:
+    </p>
+    <ul>
+      <li>Models expect airports/airlines tables; project_schema doesn’t define them.</li>
+      <li>Models expect seat availability by class; project_schema uses max/pending/registered counters.</li>
+      <li>Some endpoints are written directly against World A tables without using models.</li>
+    </ul>
+
+    <h3>4.2 Frontend API wrapper vs endpoints mismatch</h3>
+    <p>
+      <code>frontend/js/api.js</code> may call endpoints with names/parameters aligned with World B
+      while dashboards call World A endpoints.
+      When debugging, always confirm the exact endpoint URL used by that page.
+    </p>
+
+    <h3>4.3 Security assumptions (project-level)</h3>
+    <ul>
+      <li>Many endpoints accept user ids in requests without authenticating them. This is fine for a demo, but not secure for real systems.</li>
+      <li>File uploads (profile images/passports/logos) need server-side validation to be safe in production.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>5) Suggested “student split” for teaching (same 5 parts)</h2>
+    <ol>
+      <li>Part 1: Overview + Database</li>
+      <li>Part 2: Backend Config + Auth</li>
+      <li>Part 3: Backend APIs (flights/bookings/messages)</li>
+      <li>Part 4: Frontend (pages + JS + CSS)</li>
+      <li>Part 5: End-to-end flows + debugging mismatches</li>
+    </ol>
+  </div>
+
+  <div class="box">
+    <h2>6) Files covered in Part 5</h2>
+    <ul>
+      <li>All remaining “glue”: how parts connect across <code>backend/api</code> and <code>frontend</code></li>
+      <li>Highlights the schema/endpoint inconsistencies so students can run the right path</li>
+    </ul>
+  </div>
+
+  <p class="small">End of Part 5/5.</p>
+</body>
+</html>

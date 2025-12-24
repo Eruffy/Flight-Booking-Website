@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SkyVoyage / Flight Booking Website — Part 1 (Overview + Database)</title>
+  <style>
+    :root { color-scheme: light; }
+    body { font-family: Arial, Helvetica, sans-serif; line-height: 1.45; margin: 24px; color: #111; }
+    h1, h2, h3 { line-height: 1.2; }
+    h1 { font-size: 26px; margin: 0 0 8px; }
+    .meta { color: #444; margin: 0 0 18px; }
+    .box { border: 1px solid #ddd; padding: 12px 14px; border-radius: 8px; margin: 12px 0; }
+    code, pre { font-family: Consolas, Menlo, Monaco, monospace; }
+    pre { background: #f6f8fa; padding: 10px 12px; border-radius: 8px; overflow: auto; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    th, td { border: 1px solid #ddd; padding: 8px; vertical-align: top; }
+    th { background: #f3f3f3; text-align: left; }
+    .small { font-size: 12px; color: #444; }
+    .warn { background: #fff4e5; border-color: #f2c97d; }
+    @media print {
+      body { margin: 12mm; }
+      a { color: inherit; text-decoration: none; }
+      .box { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <h1>SkyVoyage / Flight Booking Website — Explanation (Part 1/5)</h1>
+  <p class="meta">Part 1: Project overview, folder structure, and database schema(s).</p>
+
+  <div class="box">
+    <h2>1) What this project is</h2>
+    <p>
+      This repository is a flight booking platform with:
+      (1) a PHP backend (REST-style endpoints under <code>backend/api</code>),
+      (2) a frontend made of static HTML/CSS/JS pages under <code>frontend</code>, and
+      (3) SQL scripts under <code>database</code>.
+    </p>
+    <p>
+      Users can register/login as either a <strong>company</strong> (adds flights, views passengers, cancels flights/refunds)
+      or a <strong>passenger</strong> (searches flights, books, messages companies).
+    </p>
+  </div>
+
+  <div class="box">
+    <h2>2) Folder structure (what each folder does)</h2>
+    <table>
+      <thead>
+        <tr><th>Path</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>backend/config</code></td><td>Backend configuration: database connection, app settings, CORS headers.</td></tr>
+        <tr><td><code>backend/models</code></td><td>PHP “Model” classes for data logic (note: these models match an older/alternate schema).</td></tr>
+        <tr><td><code>backend/api</code></td><td>HTTP endpoints used by the frontend (JSON responses).</td></tr>
+        <tr><td><code>frontend</code></td><td>Static pages (HTML) + styling (CSS) + browser logic (JS).</td></tr>
+        <tr><td><code>database</code></td><td>SQL scripts to create/seed the database schema.</td></tr>
+        <tr><td><code>Flight-Booking-Website/</code></td><td><strong>Empty folder</strong> in this workspace (safe to ignore; not used by code).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <h2>3) How the app is supposed to run (high level)</h2>
+    <ol>
+      <li>Import a SQL schema into MySQL/MariaDB.</li>
+      <li>Configure DB credentials in <code>backend/config/database.php</code>.</li>
+      <li>Serve the project via Apache (XAMPP/WAMP) so the browser can load <code>frontend/*.html</code> and call <code>backend/api/*.php</code>.</li>
+      <li>Frontend pages call backend endpoints using <code>fetch()</code> and store session info in <code>localStorage</code>.</li>
+    </ol>
+  </div>
+
+  <div class="box warn">
+    <h2>4) Important: there are TWO different database “worlds” in this repo</h2>
+    <p>
+      The codebase contains two sets of assumptions about the database tables.
+      You must understand this to avoid confusion during testing.
+    </p>
+    <ul>
+      <li>
+        <strong>World A (Project Requirements / Company–Passenger):</strong>
+        schema in <code>database/project_schema.sql</code>.
+        Tables: <code>users</code> (company/passenger), <code>flights</code> (company_id, fees, passenger counts),
+        <code>flight_itinerary</code> (cities and order), <code>bookings</code>, <code>messages</code>.
+      </li>
+      <li>
+        <strong>World B (Airports/Airlines/Seat-class):</strong>
+        implied by <code>backend/models/Flight.php</code>, <code>backend/models/Booking.php</code>, <code>backend/models/User.php</code>
+        and by some endpoints like <code>backend/api/airports.php</code> and <code>backend/api/flights.php?action=search</code>.
+        This world expects tables like <code>airports</code>, <code>airlines</code>, seat columns like <code>available_seats_economy</code>, etc.
+      </li>
+    </ul>
+    <p>
+      In practice, the “dashboard” pages (company/passenger) and endpoints such as
+      <code>register.php</code>, <code>auth.php</code>, <code>search-flights.php</code>, <code>company-flights.php</code>,
+      <code>company-flight-details.php</code>, <code>passenger-bookings.php</code>, <code>messages.php</code>
+      are aligned with <strong>World A</strong>.
+    </p>
+    <p>
+      Some other pages (like <code>search-results.html</code>) and the generic API module (<code>frontend/js/api.js</code>)
+      are aligned with <strong>World B</strong>.
+    </p>
+  </div>
+
+  <div class="box">
+    <h2>5) Database: World A (database/project_schema.sql)</h2>
+    <p>This is the schema used by the “project requirements” endpoints.</p>
+
+    <h3>5.1 users</h3>
+    <ul>
+      <li><code>user_type</code>: enum('company','passenger')</li>
+      <li><code>name,email,password,tel</code>: shared identity fields</li>
+      <li>Company fields: <code>bio,address,location,logo_img</code></li>
+      <li>Passenger fields: <code>photo,passport_img</code></li>
+      <li><code>account_balance</code>: wallet-like balance used by bookings/refunds</li>
+    </ul>
+
+    <h3>5.2 flights</h3>
+    <ul>
+      <li>Created by companies: <code>company_id</code> foreign key to users</li>
+      <li><code>fees</code>: ticket price per passenger</li>
+      <li><code>max_passengers</code>, <code>registered_passengers</code>, <code>pending_passengers</code></li>
+      <li><code>is_completed</code>: used as completed/cancelled flag in UI</li>
+    </ul>
+
+    <h3>5.3 flight_itinerary</h3>
+    <ul>
+      <li>Stores route as ordered cities: <code>city</code> + <code>sequence_order</code>.</li>
+      <li>Also includes <code>start_datetime</code> and <code>end_datetime</code> in the schema file.</li>
+      <li>Some PHP endpoints insert only (flight_id, city, sequence_order); date-time fields may need defaults or schema adjustment if strict.</li>
+    </ul>
+
+    <h3>5.4 bookings</h3>
+    <ul>
+      <li><code>status</code>: pending / registered / cancelled</li>
+      <li><code>payment_type</code>: account / cash</li>
+      <li><code>amount_paid</code>: the fee paid</li>
+    </ul>
+
+    <h3>5.5 messages</h3>
+    <ul>
+      <li>Messages between users with optional <code>flight_id</code> context.</li>
+      <li><code>is_read</code> exists in schema; current endpoints do not update it.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>6) Database: World B (database/flight_booking_export.sql)</h2>
+    <p>
+      This file is a database dump (partial in this repo view) that includes objects like a view
+      <code>active_bookings_summary</code>. The models under <code>backend/models</code>
+      strongly suggest the presence of tables such as <code>airports</code>, <code>airlines</code>, <code>aircraft</code>,
+      seat-availability columns, etc.
+    </p>
+    <p class="small">
+      If you want to run the “airports + seat classes” search flow, you likely need to import the export file
+      and confirm that all those tables exist.
+    </p>
+  </div>
+
+  <div class="box">
+    <h2>7) Files covered in Part 1 (nothing skipped)</h2>
+    <ul>
+      <li><code>README.md</code> — high-level features, setup notes.</li>
+      <li><code>database/project_schema.sql</code> — World A schema + sample seed data.</li>
+      <li><code>database/flight_booking_export.sql</code> — World B dump (airports/airlines ecosystem).</li>
+      <li><code>database/project_schema.sql</code> and <code>database/flight_booking_export.sql</code> exist; <code>database/flight_booking.sql</code> does not exist in this workspace even though README mentions it.</li>
+      <li><code>Flight-Booking-Website/</code> — empty folder (unused).</li>
+    </ul>
+  </div>
+
+  <p class="small">End of Part 1/5.</p>
+</body>
+</html>

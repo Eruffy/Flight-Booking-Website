@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flight Booking Website — Part 3 (Backend APIs)</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; line-height: 1.45; margin: 24px; color: #111; }
+    h1, h2, h3 { line-height: 1.2; }
+    h1 { font-size: 26px; margin: 0 0 8px; }
+    .meta { color: #444; margin: 0 0 18px; }
+    .box { border: 1px solid #ddd; padding: 12px 14px; border-radius: 8px; margin: 12px 0; }
+    .warn { background: #fff4e5; border-color: #f2c97d; }
+    code, pre { font-family: Consolas, Menlo, Monaco, monospace; }
+    pre { background: #f6f8fa; padding: 10px 12px; border-radius: 8px; overflow: auto; }
+    .small { font-size: 12px; color: #444; }
+    @media print { body { margin: 12mm; } }
+  </style>
+</head>
+<body>
+  <h1>Flight Booking Website — Explanation (Part 3/5)</h1>
+  <p class="meta">Part 3: Backend API endpoints for flights, bookings, and messaging (World A focus).</p>
+
+  <div class="box">
+    <h2>1) Endpoint: backend/api/get-cities.php</h2>
+    <p><strong>Purpose:</strong> provide a list of distinct cities for search UI.</p>
+    <ul>
+      <li>Queries <code>flight_itinerary</code> to return unique city names.</li>
+      <li>Used by search dropdowns/autocomplete on some pages.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>2) Endpoint: backend/api/search-flights.php</h2>
+    <p><strong>Purpose:</strong> find flights that go from one city to another, respecting the route order.</p>
+    <p>
+      The itinerary is stored as multiple rows in <code>flight_itinerary</code> (sequence order). Searching uses two joins:
+      match a row for the “from” city and a row for the “to” city in the same flight, and require:
+      <code>from.sequence_order &lt; to.sequence_order</code>.
+    </p>
+    <ul>
+      <li><strong>Method:</strong> typically <code>GET</code> (with query params like <code>from</code>, <code>to</code>)</li>
+      <li><strong>Output:</strong> list of flights + sometimes company name + basic route info.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>3) Endpoint: backend/api/company-flights.php</h2>
+    <p><strong>Purpose:</strong> list flights belonging to a company.</p>
+    <ul>
+      <li><strong>Input:</strong> company id (query param) </li>
+      <li><strong>DB action:</strong> select from <code>flights</code> where <code>company_id</code> matches.</li>
+      <li><strong>Extra:</strong> joins/aggregates itinerary to display route (first city → last city).</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>4) Endpoint: backend/api/company-flight-details.php</h2>
+    <p><strong>Purpose:</strong> show one flight and its passengers.</p>
+    <ul>
+      <li>Loads flight info + company info.</li>
+      <li>Loads pending passengers (bookings.status = pending).</li>
+      <li>Loads registered passengers (bookings.status = registered).</li>
+    </ul>
+    <p>
+      This endpoint is typically used by a company dashboard “details” page.
+    </p>
+  </div>
+
+  <div class="box">
+    <h2>5) Endpoint: backend/api/passenger-bookings.php</h2>
+    <p><strong>Purpose:</strong> list bookings for a passenger, including route info.</p>
+    <ul>
+      <li><strong>Input:</strong> passenger id.</li>
+      <li><strong>DB action:</strong> select bookings joined with flights and itinerary route display.</li>
+      <li><strong>Output:</strong> a list for passenger dashboard.</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <h2>6) Endpoint: backend/api/bookings.php</h2>
+    <p>
+      This file typically acts like a small controller with multiple behaviors:
+      read bookings, create booking, cancel booking.
+    </p>
+    <h3>6.1 Create booking</h3>
+    <ul>
+      <li>Validates seats by comparing <code>registered + pending</code> against <code>max_passengers</code>.</li>
+      <li>Inserts into <code>bookings</code> with status = pending or registered (depends on rules).</li>
+      <li>Updates counters in <code>flights</code> (pending_passengers / registered_passengers).</li>
+      <li>If payment_type is <code>account</code>, deducts from passenger balance.</li>
+    </ul>
+    <h3>6.2 Cancel booking</h3>
+    <ul>
+      <li>Sets booking status to cancelled.</li>
+      <li>Decrements the correct passenger counter on <code>flights</code>.</li>
+      <li>If payment_type was <code>account</code>, refunds the balance.</li>
+    </ul>
+    <p class="small">
+      These operations should be transactional to avoid partial updates. Some implementations do use transactions; if not, race conditions can happen under load.
+    </p>
+  </div>
+
+  <div class="box">
+    <h2>7) Endpoint: backend/api/cancel-flight.php</h2>
+    <p><strong>Purpose:</strong> company cancels/completes a flight and triggers refunds.</p>
+    <ul>
+      <li>Marks the flight as completed/cancelled (e.g., <code>is_completed=1</code>).</li>
+      <li>Finds bookings that were paid via account and refunds passengers.</li>
+      <li>Sets affected bookings to cancelled.</li>
+    </ul>
+    <p>
+      This endpoint is used from company dashboard actions.
+    </p>
+  </div>
+
+  <div class="box">
+    <h2>8) Endpoint: backend/api/messages.php</h2>
+    <p><strong>Purpose:</strong> messaging between passenger and company, optionally linked to a flight.</p>
+    <p>
+      Typical behaviors in this file:
+    </p>
+    <ul>
+      <li>List conversations for a user (recent message per “other user”).</li>
+      <li>Fetch messages between two users (optionally filtered by flight_id).</li>
+      <li>Send a message (insert into <code>messages</code>).</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>9) “World B” endpoints in backend/api</h2>
+    <p>
+      Some endpoints like <code>airports.php</code>, <code>airlines.php</code>, <code>aircraft.php</code>
+      are aligned with an airports/airlines schema (World B). They usually:
+    </p>
+    <ul>
+      <li>Return reference data (list of airports, airlines, etc.) for dropdowns.</li>
+      <li>Assume tables exist in the DB dump, not in <code>project_schema.sql</code>.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>10) Files covered in Part 3</h2>
+    <ul>
+      <li><code>backend/api/get-cities.php</code></li>
+      <li><code>backend/api/search-flights.php</code></li>
+      <li><code>backend/api/company-flights.php</code></li>
+      <li><code>backend/api/company-flight-details.php</code></li>
+      <li><code>backend/api/passenger-bookings.php</code></li>
+      <li><code>backend/api/bookings.php</code></li>
+      <li><code>backend/api/cancel-flight.php</code></li>
+      <li><code>backend/api/messages.php</code></li>
+      <li><code>backend/api/airports.php</code>, <code>airlines.php</code>, <code>aircraft.php</code> (World B)</li>
+    </ul>
+  </div>
+
+  <p class="small">End of Part 3/5.</p>
+</body>
+</html>

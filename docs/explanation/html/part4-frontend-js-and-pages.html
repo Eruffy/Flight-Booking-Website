@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Flight Booking Website — Part 4 (Frontend)</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; line-height: 1.45; margin: 24px; color: #111; }
+    h1, h2, h3 { line-height: 1.2; }
+    h1 { font-size: 26px; margin: 0 0 8px; }
+    .meta { color: #444; margin: 0 0 18px; }
+    .box { border: 1px solid #ddd; padding: 12px 14px; border-radius: 8px; margin: 12px 0; }
+    code, pre { font-family: Consolas, Menlo, Monaco, monospace; }
+    pre { background: #f6f8fa; padding: 10px 12px; border-radius: 8px; overflow: auto; }
+    .small { font-size: 12px; color: #444; }
+    .warn { background: #fff4e5; border-color: #f2c97d; }
+    @media print { body { margin: 12mm; } }
+  </style>
+</head>
+<body>
+  <h1>Flight Booking Website — Explanation (Part 4/5)</h1>
+  <p class="meta">Part 4: Frontend structure, shared JS, and page behaviors.</p>
+
+  <div class="box">
+    <h2>1) Frontend architecture</h2>
+    <p>
+      The frontend is a collection of HTML pages under <code>frontend/</code>.
+      They share styling via <code>frontend/css/style.css</code> and JavaScript via <code>frontend/js/*.js</code>.
+    </p>
+    <ul>
+      <li>Navigation is by full page loads (no SPA router).</li>
+      <li>State is stored in browser storage (usually <code>localStorage</code>).</li>
+      <li>Backend is called via <code>fetch()</code> returning JSON.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>2) Styling: frontend/css/style.css</h2>
+    <p>
+      This is the central stylesheet. It defines:
+    </p>
+    <ul>
+      <li>Layout (headers/nav, containers, cards)</li>
+      <li>Form styling (inputs, buttons, validation messages)</li>
+      <li>Tables and dashboard styles</li>
+      <li>Responsive rules for smaller screens</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <h2>3) Shared API wrapper: frontend/js/api.js</h2>
+    <p>
+      This file centralizes how the browser talks to the backend. It commonly provides:
+    </p>
+    <ul>
+      <li><strong>Base URL:</strong> a string for the backend API root.</li>
+      <li><strong>request helper:</strong> sets headers, serializes JSON, parses JSON response.</li>
+      <li><strong>Modules:</strong> AuthAPI, FlightsAPI, BookingsAPI, AirportsAPI, etc.</li>
+    </ul>
+    <p>
+      Important mismatch: parts of this wrapper target “World B” endpoints (airports/airlines/seat classes).
+      Some of the dashboard pages target “World A” endpoints (company/passenger schema).
+    </p>
+  </div>
+
+  <div class="box">
+    <h2>4) Main UI logic: frontend/js/main.js</h2>
+    <p>
+      This file typically attaches event listeners to forms/buttons and implements page behaviors.
+      Examples of common logic:
+    </p>
+    <ul>
+      <li>Handle search form submit (redirect to results page with query params).</li>
+      <li>Load dynamic lists like cities/airports (calling backend endpoints).</li>
+      <li>Read current user from <code>localStorage</code> to personalize UI.</li>
+    </ul>
+  </div>
+
+  <div class="box">
+    <h2>5) Core pages</h2>
+    <table>
+      <thead><tr><th>Page</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><code>index.html</code></td><td>Landing page + entry point to search / login.</td></tr>
+        <tr><td><code>login.html</code></td><td>Login form; on success stores user info and redirects by user type.</td></tr>
+        <tr><td><code>register.html</code></td><td>Register form; chooses passenger vs company and posts to register endpoint.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <h2>6) Passenger pages (World A)</h2>
+    <table>
+      <thead><tr><th>Page</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>passenger-dashboard.html</code></td><td>Shows passenger bookings list and actions.</td></tr>
+        <tr><td><code>passenger-profile.html</code></td><td>Shows/edit passenger profile; upload photo/passport; change password.</td></tr>
+        <tr><td><code>search-results.html</code></td><td>Shows flights found from a search; usually calls search endpoint.</td></tr>
+        <tr><td><code>flight-info.html</code></td><td>Displays one flight details and booking actions.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <h2>7) Company pages (World A)</h2>
+    <table>
+      <thead><tr><th>Page</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>company-dashboard.html</code></td><td>Lists company flights and links to details.</td></tr>
+        <tr><td><code>add-flight.html</code></td><td>Create a flight + define itinerary (cities sequence).</td></tr>
+        <tr><td><code>flight-details.html</code></td><td>Flight details for company; lists pending/registered passengers.</td></tr>
+        <tr><td><code>company-profile.html</code></td><td>Update company profile data (bio/logo/etc.).</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box">
+    <h2>8) Messaging pages</h2>
+    <p>
+      Passenger and company both have pages to view conversations and send messages.
+      Those pages call <code>backend/api/messages.php</code>.
+    </p>
+  </div>
+
+  <div class="box">
+    <h2>9) Files covered in Part 4</h2>
+    <ul>
+      <li><code>frontend/css/style.css</code></li>
+      <li><code>frontend/js/api.js</code></li>
+      <li><code>frontend/js/main.js</code></li>
+      <li>All HTML pages under <code>frontend/</code> (login/register, passenger/company dashboards, flight/search pages, profiles, messaging).</li>
+    </ul>
+  </div>
+
+  <p class="small">End of Part 4/5.</p>
+</body>
+</html>
